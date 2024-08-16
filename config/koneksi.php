@@ -12,7 +12,6 @@ $ciphertext_raw = substr($c, $ivlen+$sha2len);
 $op = openssl_decrypt($ciphertext_raw, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv); 
 $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true); 
 
-
 $options = array(
     PDO::ATTR_ERRMODE    => PDO::ERRMODE_SILENT
 );
