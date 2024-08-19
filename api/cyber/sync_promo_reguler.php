@@ -1,5 +1,10 @@
 <?php include "../../config/koneksi.php";
+$ll = "select * from ad_morg where isactived = 'Y'";
+$query = $connec->query($ll);
 
+while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+    $idstore = $row['ad_morg_key'];
+}
 function get_category($url)
 {
     $curl = curl_init();
@@ -21,7 +26,7 @@ function get_category($url)
     curl_close($curl);
     return $response;
 }
-$url = $base_url.'/store/promo/get_promo_reguler.php?idstore=1';
+$url = $base_url.'/store/promo/get_promo_reguler.php?idstore='. $idstore;
 
 $hasil = get_category($url);
 $j_hasil = json_decode($hasil, true);
@@ -39,8 +44,7 @@ foreach ($j_hasil as $key => $value) {
     $fromdate = $value['fromdate']; 
     $todate = $value['todate']; 
     $typepromo = $value['typepromo']; 
-    $maxqty = $value['maxqty']; 
-    $ad_mclient_key = $value['ad_mclient_key']; 
+    $maxqty = $value['maxqty'];
 
     $s[] = "('" . $ad_mclient_key . "', 
     '" . $amk . "', 

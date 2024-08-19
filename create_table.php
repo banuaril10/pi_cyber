@@ -563,7 +563,8 @@ foreach ($cmd_alter_sync_transit as $r) {
 $inv_category_oracle = [
 		'CREATE TABLE IF NOT EXISTS in_master_category (cat_id varchar NULL,category varchar NULL);',
 		'CREATE TABLE IF NOT EXISTS in_master_categorysub (catsub_id varchar NULL,subcategory varchar NULL);',
-		'CREATE TABLE IF NOT EXISTS in_master_categorysubitem (catsubitem_id varchar NULL,subitem varchar NULL);'
+		'CREATE TABLE IF NOT EXISTS in_master_categorysubitem (catsubitem_id varchar NULL,subitem varchar NULL);',
+		'CREATE TABLE IF NOT EXISTS otp_register (nohp varchar NULL,code varchar NULL, expired timestamp);'
 ];
 
 foreach ($inv_category_oracle as $r) {

@@ -4,15 +4,17 @@ $has = $_POST['has'];
 $domain = $_POST['domain'];
 $locationid = $_POST['locationid'];
 $name = $_POST['name'];
+$kode_otp = $_POST['kode_otp'];
 
-function push_register($url, $has, $domain, $locationid, $name)
+function push_register($url, $has, $domain, $locationid, $name, $kode_otp)
 {
    
     $postData = array(
         'has' => $has,
         'domain' => $domain,
         'locationid' => $locationid,
-        'name' => $name
+        'name' => $name,
+        'kode_otp' => $kode_otp
     );
     $fields_string = http_build_query($postData);
 
@@ -42,51 +44,64 @@ function push_register($url, $has, $domain, $locationid, $name)
 
 $url = $base_url.'/store/register/sync_register.php';
 
-$hasil = push_register($url, $has, $domain, $locationid, $name);
+$hasil = push_register($url, $has, $domain, $locationid, $name, $kode_otp);
 
 $j_hasil = json_decode($hasil, true);
-$s = array();
-
-$has = $j_hasil['data']['has'];
-$domain = $j_hasil['data']['domain'];
-$locationid = $j_hasil['data']['locationid'];
-$name = $j_hasil['data']['name'];
-    //print_r($j_hasil['data']);
-
-$values = implode(", ", $s);
-
-$jum = 0;
-$check = $connec->query("select count(pos_mcashier_key) jum from pos_mcashier where code = '" . $has . "'");
-foreach ($check as $row) {
-    $jum = $row["jum"];
-}
-
-if($jum > 0){
-    $qqq = " UPDATE pos_mcashier SET isactived = '1', insertdate = '" . date('Y-m-d H:i:s') . "', insertby = 'SYSTEM', 
-    postby = 'SYSTEM', postdate = '" . date('Y-m-d H:i:s') . "', name = '" . $name . "', description = '', 
-    ad_morg_key = '" . $locationid . "' WHERE code = '" . $has . "'";
-}else{
-    $qqq = "INSERT INTO pos_mcashier (ad_mclient_key, ad_morg_key, isactived, insertdate, insertby, postby, postdate, name, 
-    description, code) VALUES ('1', '" . $locationid . "', '1', '" . date('Y-m-d H:i:s') . "', 'SYSTEM', 'SYSTEM', '" . date('Y-m-d H:i:s') . "', 
-    '" . $name . "', '', '" . $has . "')";
-}
 
 
-$statement = $connec->prepare($qqq);
-$statement->execute();
-$result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-if ($result) {
-    $json = array(
-        "status" => "OK",
-        "message" => "Registrasi Berhasil",
-    );
-} else {
+if($j_hasil['status'] == 'FAILED'){
     $json = array(
         "status" => "FAILED",
-        "message" => "Data Not Inserted, Query = ". $qqq,
+        "message" => $j_hasil['message'],
     );
+}else{
+
+    $s = array();
+
+    $has = $j_hasil['data']['has'];
+    $domain = $j_hasil['data']['domain'];
+    $locationid = $j_hasil['data']['locationid'];
+    $name = $j_hasil['data']['name'];
+
+    $values = implode(", ", $s);
+
+    $jum = 0;
+    $check = $connec->query("select count(pos_mcashier_key) jum from pos_mcashier where code = '" . $has . "'");
+    foreach ($check as $row) {
+        $jum = $row["jum"];
+    }
+
+    if ($jum > 0) {
+        $qqq = " UPDATE pos_mcashier SET isactived = '1', insertdate = '" . date('Y-m-d H:i:s') . "', insertby = 'SYSTEM', 
+    postby = 'SYSTEM', postdate = '" . date('Y-m-d H:i:s') . "', name = '" . $name . "', description = '', 
+    ad_morg_key = '" . $locationid . "' WHERE code = '" . $has . "'";
+    } else {
+        $qqq = "INSERT INTO pos_mcashier (ad_mclient_key, ad_morg_key, isactived, insertdate, insertby, postby, postdate, name, 
+    description, code) VALUES ('". $ad_mclient_key."', '" . $locationid . "', '1', '" . date('Y-m-d H:i:s') . "', 'SYSTEM', 'SYSTEM', '" . date('Y-m-d H:i:s') . "', 
+    '" . $name . "', '', '" . $has . "')";
+    }
+
+
+    $statement = $connec->prepare($qqq);
+    $statement->execute();
+    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($result) {
+        $json = array(
+            "status" => "OK",
+            "message" => "Registrasi Berhasil",
+        );
+    } else {
+        $json = array(
+            "status" => "FAILED",
+            "message" => "Data Not Inserted, Query = " . $qqq,
+        );
+    }
+
 }
+
+
 
 echo json_encode($json);
 ?>

@@ -6,7 +6,7 @@ $query = $connec->query($ll);
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
     $idstore = $row['ad_morg_key'];
 }
-function get_category($url)
+function get($url)
 {
     $curl = curl_init();
     curl_setopt_array(
@@ -27,28 +27,40 @@ function get_category($url)
     curl_close($curl);
     return $response;
 }
-$url = $base_url.'/store/promo/get_promo_code.php?idstore='. $idstore;
+$url = $base_url.'/store/items/get_items.php?idstore='. $idstore;
 
-$hasil = get_category($url);
+$hasil = get($url);
 $j_hasil = json_decode($hasil, true);
 
 $s = array();
 foreach ($j_hasil as $key => $value) {
-    $amk = $value['ad_morg_key']; //etc
-    $isactived = $value['isactived']; //etc
-    $insertdate = $value['insertdate']; //etc
-    $insertby = $value['insertby']; //etc
-    $discountname = str_replace("'", "\'", $value['discountname']); //etc
-    $discounttype = $value['discounttype']; //etc
-    $sku = $value['sku']; //etc
-    $discount = $value['discount']; //etc
-    $fromdate = $value['fromdate']; //etc
-    $todate = $value['todate']; //etc
-    $typepromo = $value['typepromo']; //etc
-    $maxqty = $value['maxqty']; //etc
-    $afterdiscount = $value['afterdiscount']; //etc
 
-    $s[] = "('" . $ad_mclient_key . "','" . $amk . "', '" . $isactived . "', '" . date("Y-m-d H:i:s") . "','" . $insertdate . "', '" . $insertby . "', '" . $discountname . "','" . $sku . "', '" . $afterdiscount . "', '" . $fromdate . "', '" . $todate . "', '" . $maxqty . "')";
+    $itemkey = $value['itemkey'];
+    $id = $value['id'];
+    $sku = $value['sku'];
+    $barcode = $value['barcode'];
+    $shortcut = $value['shortcut'];
+    $name = str_replace("'", "\'", $value['name']);
+    $idcat = $value['idcat'];
+    $idsubcat = $value['idsubcat'];
+    $idsubitem = $value['idsubitem'];
+    $panjang = $value['panjang'];
+    $lebar = $value['lebar'];
+    $tinggi = $value['tinggi'];
+    $berat = $value['berat'];
+    $imageurl = $value['imageurl'];
+    $insertdate = $value['insertdate'];
+    $updatedate = $value['updatedate'];
+    $tag = $value['tag'];
+    $category = $value['category'];
+    $subcategory = $value['subcategory'];
+    $subitem = $value['subitem'];
+    $isactived = $value['isactived'];
+
+    
+    $s[] = "('". $ad_mclient_key."','" . $idstore . "', '".$isactived."', '" . date("Y-m-d H:i:s") . "', 'SYSTEM', 'SYSTEM', 
+    '" . date("Y-m-d H:i:s") . "', '" . $id . "', '".$idcat."', '" . $sku . "',
+    '" . $name . "', '', '0', '0', '" . $shortcut . "', '" . $barcode . "','" . $tag . "', '".$idcat."', '".$idsubcat."', '".$idsubitem."')";
 }
 
 if($s == null){
@@ -61,12 +73,13 @@ if($s == null){
 }
 
 //truncate
-$truncate = "TRUNCATE pos_mproductdiscountmember";
+$truncate = "TRUNCATE pos_mproduct";
 $statement = $connec->prepare($truncate);
 $statement->execute();
 
 $values = implode(", ", $s);
-$insert = "insert into pos_mproductdiscountmember (ad_mclient_key, ad_morg_key, isactived, postdate, insertdate, insertby, discountname, sku, pricediscount, fromdate, todate, maxqty) 
+$insert = "insert into pos_mproduct (ad_mclient_key, ad_morg_key, isactived, insertdate, insertby, postby, postdate, m_product_id, m_product_category_id, sku, 
+            name, description, price, stockqty, shortcut, barcode, tag, idcat, idsubcat, idsubitem)
             VALUES " . $values . ";";
 
 $statement = $connec->prepare($insert);

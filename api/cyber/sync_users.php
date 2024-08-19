@@ -47,10 +47,12 @@ foreach ($j_hasil as $key => $value) {
     $accesscode = $value['accesscode'];
     $unicode = $value['unicode'];
 
-    $s_user[] = "('".$id_user."', '', '".$idstore."', '1', '".date('Y-m-d H:i:s')."', 'SYSTEM', 'SYSTEM', '".date('Y-m-d H:i:s')."', '".$id_role."', '".$username."', 
+    $s_user[] = "('".$id_user."', '".$ad_mclient_key."', '".$idstore."', '1', '".date('Y-m-d H:i:s')."', 'SYSTEM', 'SYSTEM', '".date('Y-m-d H:i:s')."', '".$id_role."', '".$username."', 
     '".$fullname."', '".$password."', '1')";
 
-    $s_spv[] = "('".$idstore."', '1', '".date('Y-m-d H:i:s')."', 'SYSTEM', 'SYSTEM', '".date('Y-m-d H:i:s')."', '".$id_user."','".$accesscode."', '".$unicode."')";
+    if($accesscode != "" && $unicode != ""){
+        $s_spv[] = "('" . $ad_mclient_key . "', '" . $idstore . "', '1', '" . date('Y-m-d H:i:s') . "', 'SYSTEM', 'SYSTEM', '" . date('Y-m-d H:i:s') . "', '" . $id_user . "','" . $accesscode . "', '" . $unicode . "')";
+    }
 }
 
 $msg = "Data User Failed";
@@ -83,7 +85,7 @@ if(count($s_spv) > 0){
     $statement->execute();
 
     $values = implode(", ", $s_spv);
-    $insert = "insert into pos_msupervisor (ad_morg_key, isactived, insertdate, insertby, postby, postdate, ad_muser_key, accesscode, accessuniq) VALUES " . $values . ";";
+    $insert = "insert into pos_msupervisor (ad_mclient_key, ad_morg_key, isactived, insertdate, insertby, postby, postdate, ad_muser_key, accesscode, accessuniq) VALUES " . $values . ";";
 
     $statement = $connec->prepare($insert);
     $statement->execute();
