@@ -49,6 +49,7 @@ foreach ($j_hasil as $key => $value) {
     $address1 = $j_hasil[0]['address1'];
     $address2 = $j_hasil[0]['address2'];
     $address3 = $j_hasil[0]['address3'];
+    $addressdonasi = $j_hasil[0]['addressdonasi'];
     $isqty = $j_hasil[0]['isqty'];
     $note1 = $j_hasil[0]['note1'];
     $note2 = $j_hasil[0]['note2'];
@@ -57,12 +58,12 @@ foreach ($j_hasil as $key => $value) {
     if ($isqty == 0) {
         $update = "UPDATE ad_morg
         SET name='".$name."', value='". $value."', address1='". $address1."', 
-        address2='" . $address2 . "', address3='" . $address3 . "', addressdonasi='" . $address1 . "', isqty=false, note1='" . $note1 . "', 
+        address2='" . $address2 . "', address3='" . $address3 . "', addressdonasi='" . $addressdonasi . "', isqty=false, note1='" . $note1 . "', 
         note2='" . $note2 . "', note3='" . $note3 . "'";
     } else {
         $update = "UPDATE ad_morg
         SET name='" . $name . "', value='" . $value . "', address1='" . $address1 . "', 
-        address2='" . $address2 . "', address3='" . $address3 . "', addressdonasi='" . $address1 . "', isqty=true, note1='" . $note1 . "', 
+        address2='" . $address2 . "', address3='" . $address3 . "', addressdonasi='" . $addressdonasi . "', isqty=true, note1='" . $note1 . "', 
         note2='" . $note2 . "', note3='" . $note3 . "'";
     }
 }

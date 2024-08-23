@@ -1,7 +1,6 @@
 <?php include "../../config/koneksi.php";
 $ll = "select * from ad_morg where isactived = 'Y'";
 $query = $connec->query($ll);
-
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
     $idstore = $row['ad_morg_key'];
 }
