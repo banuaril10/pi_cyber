@@ -23,17 +23,19 @@ function get_sales($url, $date, $ad_org_id)
     );
     $fields_string = http_build_query($postData);
     $curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => $fields_string,
-    )
+    curl_setopt_array(
+        $curl,
+        array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $fields_string,
+        )
     );
 
     $response = curl_exec($curl);
@@ -69,27 +71,47 @@ foreach ($statement3 as $r) {
 $selisih = $header_amount - $j_hasil['header_amount'];
 $selisih_line = $line_amount - $j_hasil['line_amount'];
 
-echo
-    "
-        <tr>
-        <td>" . $header . "</td>
-        <td>" . rupiah($header_amount) . "</td>
-        <td>" . $line . "</td>
-        <td>" . rupiah($line_amount) . "</td>
-        <td>" . $j_hasil['header'] . "</td>
-        <td>" . rupiah($j_hasil['header_amount']) . "</td>
-        <td>" . $j_hasil['line'] . "</td>
-        <td>" . rupiah($j_hasil['line_amount']) . "</td>
-        <td>" . rupiah($j_hasil['cashier_amount']) . "</td>
-        </tr>
-        <tr>
-        <th style='background-color: rgb(244, 44, 44)' colspan='4'>SELISIH HEADER</th>
-        <th style='background-color: rgb(244, 44, 44)' colspan='4'>SELISIH LINE</th>
-        </tr>
-        <tr>
-        <td colspan='4'>" . rupiah($selisih) . "</td>
-        <td colspan='4'>" . rupiah($selisih_line) . "</td>
-        </tr>
+
+if ($selisih != 0 || $selisih_line != 0) {
+    $msg = "<font style='color: red; font-weight: bold'> Masih ada selisih.. , Header : " . $selisih . ", Line : " . $selisih_line . "</font>";
+} else {
+    $msg = "<font style='color: green; font-weight: bold'> Tidak ada selisih..</font>";
+}
+echo "<table border='1'>";
+echo "<tr>
+        <th colspan='2'>Status Sales Order</th>
+        </tr>";
+echo "<tr style='background: #fff'>";
+echo "
+        <td>" . $tanggal . "</td>
+        <td>" . $msg . "</td>
+        
         ";
+echo "</tr>";
+echo "</table>";
+
+
+// <tr>
+// <td>" . $header . "</td>
+// <td>" . rupiah($header_amount) . "</td>
+// <td>" . $line . "</td>
+// <td>" . rupiah($line_amount) . "</td>
+// <td>" . $j_hasil['header'] . "</td>
+// <td>" . rupiah($j_hasil['header_amount']) . "</td>
+// <td>" . $j_hasil['line'] . "</td>
+// <td>" . rupiah($j_hasil['line_amount']) . "</td>
+// <td>" . rupiah($j_hasil['cashier_amount']) . "</td>
+// </tr>
+// <tr>
+// <th style='background-color: rgb(244, 44, 44)' colspan='4'>SELISIH HEADER</th>
+// <th style='background-color: rgb(244, 44, 44)' colspan='4'>SELISIH LINE</th>
+// </tr>
+// echo
+//     "
+//         <tr>
+//         <td colspan='4'>" . rupiah($selisih) . "</td>
+//         <td colspan='4'>" . rupiah($selisih_line) . "</td>
+//         </tr>
+//         ";
 
 

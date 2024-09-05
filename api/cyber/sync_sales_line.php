@@ -43,6 +43,16 @@ $jj_line = array();
 
 $list_line = "select * from pos_dsalesline where date(insertdate) = '" . $tanggal . "' and isactived = '1' and status_intransit is null ";
 foreach ($connec->query($list_line) as $row2) {
+
+
+    $get_jenis = $connec->query("select jenis_promo from pos_mproductdiscount 
+    where discountname = '" . $row2['discountname'] . "' and sku = '" . $row2['sku'] . "' and date(now()) between fromdate and todate");
+
+    foreach ($get_jenis as $r) {
+        $jenis_promo = $r['jenis_promo'];
+    }
+
+
     $jj_line[] = array(
         "pos_dsalesline_key" => $row2['pos_dsalesline_key'],
         "ad_mclient_key" => $row2['ad_mclient_key'],
@@ -63,7 +73,8 @@ foreach ($connec->query($list_line) as $row2) {
         "issync" => $row2['issync'],
         "discountname" => $row2['discountname'],
         "status_sales" => $row2['status_sales'],
-        "status_intransit" => $row2['status_intransit']
+        "status_intransit" => $row2['status_intransit'],
+        "jenis_promo" => $jenis_promo
     );
 }
 

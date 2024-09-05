@@ -759,10 +759,7 @@ function cetakStrukDetail(id){
 
 	function loadTable(){
 			var userid = document.getElementById("userid").value;		
-			var tanggal = document.getElementById("tanggal").value;		
-			
-			
-			
+			var tanggal = document.getElementById("tanggal").value;	
 			
            $('.table').DataTable({
               "processing": true,
@@ -861,12 +858,7 @@ function cetakStrukDetail(id){
 					if(dataResult.result=='1'){
 						$('#notif').html('<font style="color: green">'+dataResult.msg+'</font>');
 						$("#overlay").fadeOut(300);　
-						
-						
-						
 						location.reload();
-						
-						
 					}
 					else {
 						$("#overlay").fadeOut(300);　
@@ -874,8 +866,7 @@ function cetakStrukDetail(id){
 					}
 					
 				}
-			});
-
+		});
 	}
 	
 	

@@ -75,6 +75,7 @@ if ($jum == 0) {
         $note1 = $j_hasil[0]['note1'];
         $note2 = $j_hasil[0]['note2'];
         $note3 = $j_hasil[0]['note3'];
+        $orgtype = 'oracle';
 
         if($isqty == 0){
             $s[] = "('$ad_morg_key', '$ad_mclient_key', '$isactived', '$insertdate', '$insertby', '$postby', '$postdate', '$name', '$description', '$value', 

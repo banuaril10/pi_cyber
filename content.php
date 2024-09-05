@@ -103,7 +103,7 @@
 						// where status = '1' and inventorytype = '".$_SESSION['role']."' and date(insertdate) = date(now()) order by insertdate desc";
 						
 						$sql_list = "select m_pi_key, name ,insertdate, rack_name, insertby, status, m_locator_id, inventorytype, category from m_pi 
-						where status = '1' and inventorytype = '".$_SESSION['role']."' and date(insertdate) = date(now()) order by insertdate desc";
+						where status = '1' and inventorytype = 'Daily' and date(insertdate) = date(now()) order by insertdate desc";
 						
 						$no = 1;
 						foreach ($connec->query($sql_list) as $row) {
@@ -283,7 +283,7 @@
 			
 			<select name="it" id="it" class="selectize" required>
 				
-				<option value="<?php echo $_SESSION['role']; ?>"><?php echo $_SESSION['role']; ?></option>
+				<option value="Daily">Daily</option>
 				
 			</select>
 			
@@ -328,10 +328,10 @@
 			<select name="rack" id="rack" class="selectize">
 				<option value="">Rack Name</option>
 				<?php 
-				$sql1 = "select * from in_master_rack";
+				$sql1 = "select rack from pos_mproduct where rack != '' group by rack";
 	
 				foreach ($connec->query($sql1) as $row) {
-					echo '<option value="'.$row['rack_id'].'">'.$row['rack'].'</option>';	    
+					echo '<option value="'.$row['rack'].'">'.$row['rack'].'</option>';	    
 				}
 				?>
 			</select>
@@ -705,6 +705,9 @@ $('#butsave').on('click', function() {
 	
 	
 	function cekSalesOrder(org_id){
+
+$('#notif').html("Pastikan sales order sudah completed..");
+
 		// $.ajax({
 		// 	url: "https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=cek_sales&org_id="+org_id,
 		// 	type: "GET",
@@ -726,7 +729,7 @@ $('#butsave').on('click', function() {
 		// 		}else if(dataResult.result=='0'){
 					// $("#overlay").fadeOut(300);
 					// $('#notif').html(dataResult.msg);
-					$('#notif').html("Proses cek sales order gantung..");
+					
 					
 					
 		// 		}

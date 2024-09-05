@@ -42,4 +42,18 @@ function check_null($var){
 	}
 }
 
+function rupiah_pos($angka){
+	$hasil_rupiah = number_format($angka,0,',','.');
+	return $hasil_rupiah;
+}
+
+function date_format_pos($date){
+	$hasil_date = date('d-m-Y', strtotime($date));
+	return $hasil_date;
+}
+
+function time_format_pos($date){
+	$hasil_date = date('H:i', strtotime($date));
+	return $hasil_date;
+}
 ?>

@@ -550,7 +550,8 @@ $cmd_alter_sync_transit = [
 	'ALTER TABLE pos_dshopsales ADD COLUMN IF NOT EXISTS status_intransit varchar(2);',
 	'ALTER TABLE pos_mproduct ADD COLUMN IF NOT EXISTS idcat int;',
 	'ALTER TABLE pos_mproduct ADD COLUMN IF NOT EXISTS idsubcat int;',
-	'ALTER TABLE pos_mproduct ADD COLUMN IF NOT EXISTS idsubitem int;'
+	'ALTER TABLE pos_mproduct ADD COLUMN IF NOT EXISTS idsubitem int;',
+	'ALTER TABLE pos_mproductdiscount ADD COLUMN IF NOT EXISTS jenis_promo varchar(20);'
 ];
 
 foreach ($cmd_alter_sync_transit as $r) {

@@ -23,7 +23,7 @@ include "../config/koneksi.php";
 // $ch = curl_init();
 $username = $_SESSION['username'];
 $useridcuy = $_SESSION['userid'];
-$org_key = $_SESSION['org_key'];
+// $org_key = $_SESSION['org_key'];
 $ss = $_SESSION['status_sales'];
 $kode_toko = $_SESSION['kode_toko'];
 $rand_no = rand(1, 100);
@@ -34,6 +34,7 @@ foreach ($resultss as $r) {
 	$storename = $r["name"];
 	$storecode = $r["value"];
 	$ad_morg_key = $r["ad_morg_key"];
+	$org_key = $r["ad_morg_key"];
 	$brand = strtoupper($r["address3"]);
 }
 
@@ -60,90 +61,9 @@ function rupiah($angka)
 
 }
 
-function get_data_balance($org, $date)
-{
-
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => "https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=get_data_balance&org_id=" . $org . "tgl=" . $date,
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'GET',
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
-}
-
-function get_data_sku()
-{
-
-
-	// $fields_string = http_build_query($postData);
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=sync_sku',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'GET',
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
-}
-
-function get_data_sku_nonaktif()
-{
-
-
-	// $fields_string = http_build_query($postData);
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=sync_sku_nonaktif',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'GET',
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
-}
-
-
 function get_data_grab($kt)
 {
-
-
-	// $fields_string = http_build_query($postData);
 	$curl = curl_init();
-
 	curl_setopt_array($curl, array(
 		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=sync_grab_toko&kode_toko=' . $kt,
 		CURLOPT_RETURNTRANSFER => true,
@@ -159,52 +79,28 @@ function get_data_grab($kt)
 
 	curl_close($curl);
 	return $response;
-
-
 }
 
-
-function get_data_gudang($org)
+function get_data_cat_get_cyber($base_url, $pc, $rack, $org_key, $kode_toko, $type)
 {
-
 	$curl = curl_init();
 
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => "https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=sync_inv&org_id=" . $org,
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'GET',
-	));
+	if ($type == 'Rack') {
+		$url = $base_url . '/netsuite/inventory/get_stock.php';
+	} else if ($type == 'Category') {
+		$url = $base_url . '/netsuite/inventory/get_stock.php';
+	}
 
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
-}
-
-
-function get_data_cat($ss, $pc, $org_key, $kode_toko)
-{
-
-	$postData = array(
-		"org_key" => $org_key,
-		"pc" => $pc,
-		"ss" => $ss,
-		"kode_toko" => $kode_toko,
-
-
+	// return $url;
+	$post = array(
+		'org_key' => $org_key,
+		'pc' => $pc,
+		'rack' => $rack,
+		'kode_toko' => $kode_toko
 	);
-	$fields_string = http_build_query($postData);
-	$curl = curl_init();
 
 	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=get_data_cat',
+		CURLOPT_URL => $url,
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_ENCODING => '',
 		CURLOPT_MAXREDIRS => 10,
@@ -212,178 +108,8 @@ function get_data_cat($ss, $pc, $org_key, $kode_toko)
 		CURLOPT_FOLLOWLOCATION => true,
 		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $fields_string,
-	));
+		CURLOPT_POSTFIELDS => $post,
 
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
-}
-
-function get_data_cat_get($ss, $pc, $org_key, $kode_toko)
-{
-
-	// $postData = array(
-	// "org_key" => $org_key,
-	// "pc" => $pc,
-	// "ss" => $ss,
-	// "kode_toko" => $kode_toko,
-
-
-	// );				    
-	// $fields_string = http_build_query($postData);
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=get_data_cat_get&org_key=' . $org_key . '&pc=' . $pc . '&ss=' . $ss . '&kode_toko=' . $kode_toko,
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'GET',
-		// CURLOPT_POSTFIELDS => $fields_string,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
-}
-
-function push_to_server($pi_key, $a, $b, $c, $d, $e, $f, $ff, $g, $h, $i, $j, $k, $l, $m, $n)
-{
-
-
-	// echo "<script>console.log('Debug Objects: ".$pikey." - " . $a."-". $b."-". $c."-". $d."-". $e."-". $f."-". $g."-". $h."-". $i."-". $j."-". $k."-". $l."-". $m . "' );</script>";
-
-	$postData = array(
-		"m_pi_key" => $pi_key,
-		"ad_client_id" => $a,
-		"ad_org_id" => $b,
-		"insertdate" => $c,
-		"insertby" => $d,
-		"m_locator_id" => $e,
-		"inventorytype" => $f,
-		"name" => $ff,
-		"description" => $g,
-		"movementdate" => $h,
-		"approvedby" => $i,
-		"status" => '1',
-		"rack_name" => $k,
-		"postby" => $l,
-		"postdate" => $m,
-		"isactived" => $n
-	);
-
-	// print_r($postData);	
-
-
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=pi',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $postData,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-	// if ($server_output == "OK") {$json = array('result'=>'1');	  } else {$json = array('result'=>'0');	 }
-	// $json_string = json_encode($json);
-	// return $json_string;
-}
-
-
-
-function push_to_server_line($a, $b, $c, $d, $e, $f, $g, $h, $i, $ii, $j, $k, $kk, $l, $m, $n, $o, $p, $q, $r, $s)
-{
-
-
-
-
-	$postData = array(
-		"m_piline_key" => $a,
-		"m_pi_key" => $b,
-		"ad_client_id" => $c,
-		"ad_org_id" => $d,
-		"isactived" => $e,
-		"insertdate" => $f,
-		"insertby" => $g,
-		"postby" => $h,
-		"postdate" => $i,
-		"m_storage_id" => $ii,
-		"m_product_id" => $j,
-		"sku" => $k,
-		"name" => $kk,
-		"qtyerp" => $l,
-		"qtycount" => $m,
-		"issync" => $n,
-		"status" => $o,
-		"verifiedcount" => $p,
-		"qtysales" => $q,
-		"price" => $r,
-		"qtysalesout" => $s,
-	);
-
-
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=piline',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $postData,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-}
-
-function push_to_server_line_all($a)
-{
-
-
-
-
-	$postData = array(
-		"data_line" => $a,
-	);
-	$fields_string = http_build_query($postData);
-
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=piline_all',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $fields_string,
 	));
 
 	$response = curl_exec($curl);
@@ -420,100 +146,9 @@ function push_stock_grab($a)
 	return $response;
 }
 
-function push_to_newpos($a)
-{
-
-
-
-
-	$postData = array(
-		"data" => $a,
-	);
-	$fields_string = http_build_query($postData);
-
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=sync_cashin',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $fields_string,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-}
-
-
-function push_to_newpos_price($a)
-{
-
-	$postData = array(
-		"data" => $a,
-	);
-	$fields_string = http_build_query($postData);
-
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=input_perubahan_harga',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $fields_string,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-}
-
-
-function push_to_server_line_all2($a)
-{
-
-
-	$postData = array(
-		"data_line" => $a,
-	);
-	$fields_string = http_build_query($postData);
-
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=piline_all_all_all',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $fields_string,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-}
 
 function piline_semua($a)
 {
-
-
 	$postData = array(
 		"data_line" => $a,
 	);
@@ -541,8 +176,6 @@ function piline_semua($a)
 
 function piline_semua_nasional($a)
 {
-
-
 	$postData = array(
 		"data_line" => $a,
 	);
@@ -566,41 +199,6 @@ function piline_semua_nasional($a)
 
 	curl_close($curl);
 	return $response;
-}
-
-function get_data_erp_borongan($a, $b, $c, $d, $e, $f)
-{
-
-	$postData = array(
-		"m_locator_id" => $a,
-		"m_pro_id" => $b,
-		"org_key" => $c,
-		"ss" => $d,
-		"kode_toko" => $e,
-		"rack" => $f
-
-	);
-	$fields_string = http_build_query($postData);
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=get_data_new',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $fields_string,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
 }
 
 function get_data_erp_borongan_direct_webpos($a, $c, $d, $e, $f)
@@ -633,8 +231,6 @@ function get_data_erp_borongan_direct_webpos($a, $c, $d, $e, $f)
 
 	curl_close($curl);
 	return $response;
-
-
 }
 
 function get_data_all_items($a, $b)
@@ -814,8 +410,6 @@ function get_data_harga($ad_morg_key)
 
 	curl_close($curl);
 	return $response;
-
-
 }
 
 function get_data_harga_null($ad_morg_key)
@@ -908,7 +502,6 @@ function get_data_doc($a, $b)
 	$postData = array(
 		"org_id" => $a,
 		"doc_no" => $b
-
 	);
 	// $fields_string = http_build_query($postData);
 	$curl = curl_init();
@@ -929,36 +522,6 @@ function get_data_doc($a, $b)
 
 	curl_close($curl);
 	return $response;
-}
-
-function get_data_stock_all($a)
-{
-
-	$postData = array(
-		"org_id" => $a,
-
-	);
-	// $fields_string = http_build_query($postData);
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=sync_pos_fix',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $postData,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
 }
 
 function get_data_erp($a, $b, $c, $d)
@@ -1117,65 +680,6 @@ function monitoring($a)
 }
 
 
-function input_shortcut($sku, $shortcut, $username)
-{
-
-	$postData = array(
-		"sku" => $sku,
-		"shortcut" => $shortcut,
-		"insert_name" => $username,
-
-	);
-	// $fields_string = http_build_query($postData);
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=input_shortcut',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => $postData,
-	));
-
-	$response = curl_exec($curl);
-
-	curl_close($curl);
-	return $response;
-
-
-}
-
-
-
-function inputLomba($no_hp, $nama, $kategori, $nama_toko, $ad_org_id)
-{
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => 'https://pi.idolmartidolaku.com/api/action.php?modul=lomba&act=input',
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_ENCODING => '',
-		CURLOPT_MAXREDIRS => 10,
-		CURLOPT_TIMEOUT => 0,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		CURLOPT_CUSTOMREQUEST => 'POST',
-		CURLOPT_POSTFIELDS => '{"no_hp":"' . $no_hp . '","nama":"' . $nama . '","kategori":"' . $kategori . '","nama_toko":"' . $nama_toko . '","ad_org_id":"' . $ad_org_id . '"}',
-		CURLOPT_HTTPHEADER => array(
-			'Content-Type: application/json'
-		),
-	));
-
-	$response = curl_exec($curl);
-	curl_close($curl);
-	return $response;
-
-}
-
 
 
 if ($_GET['modul'] == 'inventory') {
@@ -1191,24 +695,13 @@ if ($_GET['modul'] == 'inventory') {
 
 
 
-	// $it = 'Global';
-	// $sl = '4DC01BB67AB148C9A02C4F5DB39AF969';
-	// $kat = '1';
-	// $rack = 'R-1';
-	// $pc = 1;
-	// $ss = '0';
-
-
-
 	if ($_GET['act'] == 'input') {
-
 
 		if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
 
-			$cekrak = "select count(m_pi_key) jum from m_pi where rack_name='" . $rack . "' and (status != '5') and date(insertdate) = date(now())";
+			$cekrak = "select count(m_pi_key) jum from m_pi where rack_name='" . $rack . "' and status != '5' and date(insertdate) = date(now())";
 			$cr = $connec->query($cekrak);
 			foreach ($cr as $ra) {
-
 				$countrak = $ra['jum'];
 			}
 
@@ -1217,14 +710,11 @@ if ($_GET['modul'] == 'inventory') {
 
 			} else {
 
-
-
-
 				$statement = $connec->query("insert into m_pi (
-			ad_client_id, ad_org_id, isactived, insertdate, insertby, m_locator_id, inventorytype, name, description, 
-			movementdate, approvedby, status, rack_name, postby, postdate, category
-			) VALUES ('','" . $org_key . "','1','" . date('Y-m-d H:i:s') . "','" . $username . "', '" . $sl . "', '" . $it . "','" . $kode_toko . "-" . date('YmdHis') . "','PI-" . $rack . "', 
-			'" . date('Y-m-d H:i:s') . "','user spv','1','" . $rack . "','" . $username . "','" . date('Y-m-d H:i:s') . "', '1') RETURNING m_pi_key");
+				ad_client_id, ad_org_id, isactived, insertdate, insertby, m_locator_id, inventorytype, name, description, 
+				movementdate, approvedby, status, rack_name, postby, postdate, category
+				) VALUES ('','" . $org_key . "','1','" . date('Y-m-d H:i:s') . "','" . $username . "', '" . $sl . "', '" . $it . "','" . $kode_toko . "-" . date('YmdHis') . "','PI-" . $rack . "', 
+				'" . date('Y-m-d H:i:s') . "','user spv','1','" . $rack . "','" . $username . "','" . date('Y-m-d H:i:s') . "', '2') RETURNING m_pi_key");
 
 
 
@@ -1234,147 +724,82 @@ if ($_GET['modul'] == 'inventory') {
 
 						$lastid = $rr['m_pi_key'];
 						// $lastid = '12322';
-
-
 						if ($insertfrom == 'M') {
-
 							$connec->query("update m_pi set insertfrommobile = 'Y' where m_pi_key = '" . $lastid . "'");
 						} else if ($insertfrom == 'W') {
 							$connec->query("update m_pi set insertfromweb = 'Y' where m_pi_key = '" . $lastid . "'");
-
-
 						}
-
-
 					}
-
-
-
-
-					//mulai dari sini
-
-					// $sql1 = "select m_product_id,sku from inv_mproduct where rack_name='".$rack."'";
-					// $result = $connec->query($sql1);
-					// $count = $result->rowCount();
 
 					$no = 0;
 					$items = array();
-
-					$items_json = json_encode($items);
-
-
-					$hasil = get_data_erp_borongan_direct_webpos($sl, $org_key, $ss, $kode_toko, $rack); //php curl
-
-
-					// print_r ($hasil);
-
+					$hasil = get_data_cat_get_cyber($base_url, $pc, $rack, $org_key, $kode_toko, "Rack");
+					$total = 0;
+					// print_r($hasil);
 
 
 					$j_hasil = json_decode($hasil, true);
 
 
-					// $obj = json_decode($j_hasil);
-					// var_dump($j_hasil);
-					// die();
-					// print_r($items_json);
 
-					$num = count($j_hasil);
+					foreach ($j_hasil as $r) {
+						$qtyon = $r['qtyon'];
+						$price = $r['price'];
+						$pricebuy = $r['pricebuy'];
+						$qtyout = $r['qtyout'];
+						$mpi = $r['mpi'];
+						$sku = $r['sku'];
+						$namaitem = $r['namaitem'];
+						$barcode = $r['barcode'];
 
-					if ($num > 0) {
-
-						foreach ($j_hasil as $r) {
-
-
-							$qtysales = 0;
-							$sql_sales = "select case when sum(qty) is null THEN '0' ELSE sum(qty) END as qtysales from pos_dsalesline 
+						$sql_sales = "select case when sum(qty) is null THEN '0' ELSE sum(qty) END as qtysales from pos_dsalesline 
 						where date(insertdate)=date(now()) and sku='" . $r['sku'] . "'";
 
-							$rsa = $connec->query($sql_sales);
+						$rsa = $connec->query($sql_sales);
 
-							foreach ($rsa as $rsa1) {
+						foreach ($rsa as $rsa1) {
 
-								$qtysales = $rsa1['qtysales'];
+							$qtysales = $rsa1['qtysales'];
+						}
+
+						$cek_count = "select qtycount from m_piline where sku = '" . $r['sku'] . "' and date(insertdate)=date(now())"; //mencari apakah items sdh ada di rack piline
+						$rsac = $connec->query($cek_count);
+						$ccc = $rsac->rowCount();
+
+						if ($ccc > 0) {
+							foreach ($rsac as $rrr) {
+
+								$qtycount = $rrr['qtycount'];
 							}
 
-
-
-							// $qtysales = $row['qtysales'];
-							$cek_count = "select qtycount from m_piline where sku = '" . $r['sku'] . "' and date(insertdate)=date(now())"; //mencari apakah items sdh ada di rack piline
-							$rsac = $connec->query($cek_count);
-							$ccc = $rsac->rowCount();
-
-							if ($ccc > 0) {
-								foreach ($rsac as $rrr) {
-
-									$qtycount = $rrr['qtycount'];
-								}
-
-							} else {
-								$qtycount = 0;
-
-							}
-
-
-
-
-
-
-							$qtyon = $r['qtyon'];
-							$price = $r['price'];
-							$pricebuy = $r['pricebuy'];
-							$statuss = $r['statuss'];
-							$qtyout = $r['qtyout'];
-							$statusss = $r['statusss'];
-							$mpi = $r['mpi'];
-							$sku = $r['sku'];
-							$barcode = $r['barcode'];
-							// $qtycount= $r['qtycount'];
-							// $qtysales= $r['qtysales'];
-							$ketemu = $r['ketemu'];
-
-							if ($ketemu == 1) {
-
-
-
-								$statement1 = $connec->query("insert into m_piline (m_pi_key, ad_org_id, isactived, insertdate, insertby, postdate, m_storage_id, m_product_id, sku, qtyerp, qtycount, qtysales, price, status, qtysalesout, status1, barcode, hargabeli) 
-					VALUES ('" . $lastid . "','" . $org_key . "','1','" . date('Y-m-d H:i:s') . "','" . $username . "', '" . date('Y-m-d H:i:s') . "', '" . $sl . "','" . $mpi . "', 
-					'" . $sku . "', '" . $qtyon . "', '" . $qtycount . "', '" . $qtysales . "','" . $price . "', '" . $statuss . "', '" . $qtyout . "','" . $statusss . "', '" . $barcode . "','" . $pricebuy . "')");
-
-
-								if ($statement1) {
-
-									$connec->query("update pos_mproduct set isactived = 0 where sku = '" . $sku . "'");
-
-
-									$no = $no + 1;
-									if ($no == $count) {
-										$json = array('result' => '1');
-
-									} else {
-
-										$json = array('result' => '2');
-									}
-
-
-								}
-
-							}
-
+						} else {
+							$qtycount = 0;
 
 						}
 
+						$statement1 = $connec->query("insert into m_piline (m_pi_key, ad_org_id, isactived, insertdate, insertby, postdate, m_storage_id, m_product_id, sku, qtyerp, qtycount, qtysales, price, status, qtysalesout, status1, barcode, hargabeli) 
+						VALUES ('" . $lastid . "','" . $org_key . "','1','" . date('Y-m-d H:i:s') . "','" . $username . "', '" . date('Y-m-d H:i:s') . "', '" . $sl . "','" . $mpi . "', 
+						'" . $sku . "', '" . $qtyon . "', '" . $qtycount . "', '" . $qtysales . "','" . $price . "', '1', '" . $qtyout . "','1', '" . $barcode . "','" . $pricebuy . "')");
 
-						$json = array('result' => '1', 'msg' => 'Selesai load');
+						if ($statement1) {
 
+							$connec->query("update pos_mproduct set isactived = 0 where sku = '" . $sku . "'");
+							$no = $no + 1;
+							if ($no == $count) {
+								$json = array('result' => '1');
 
-					} else {
+							} else {
 
-						$json = array('result' => '0', 'msg' => 'Rack tidak ada, hub tim plano untuk cek apakah rack tsb ada');
+								$json = array('result' => '2');
+							}
+						}
 
+						$total = $total + 1;
 					}
 
-
-
+					if ($total == 0) {
+						$json = array('result' => '0', 'msg' => 'Items tidak ditemukan');
+					}
 
 
 				} else {
@@ -1391,15 +816,8 @@ if ($_GET['modul'] == 'inventory') {
 			$json = array('result' => '3', 'msg' => 'Session telah habis, reload halaman dulu');
 		}
 
-		// $qqq = 	"insert into m_piline (m_pi_key, ad_org_id, isactived, insertdate, insertby, postdate, m_storage_id, m_product_id, sku, qtyerp, qtycount, qtysales, price, status, qtysalesout, status1, barcode, hargabeli) 
-		// VALUES ('".$lastid."','".$org_key."','1','".date('Y-m-d H:i:s')."','".$username."', '".date('Y-m-d H:i:s')."', '".$sl."','".$mpi."', 
-		// '".$sku."', '".$qtyon."', '".$qtycount."', '".$qtysales."','".$price."', '".$statuss."', '".$qtyout."','".$statusss."', '".$barcode."','".$pricebuy."')";
-
 		$json_string = json_encode($json);
 		echo $json_string;
-		// var_dump($qqq);
-		// var_dump($j_hasil);
-
 
 	} else if ($_GET['act'] == 'input_kat') {
 
@@ -1407,7 +825,6 @@ if ($_GET['modul'] == 'inventory') {
 		$ceknamakat = "select * from in_master_category where cat_id = '" . $pc . "'";
 		$cnk = $connec->query($ceknamakat);
 		foreach ($cnk as $ras) {
-
 			$namakat = $ras['category'];
 		}
 
@@ -1440,20 +857,15 @@ if ($_GET['modul'] == 'inventory') {
 						$lastid = $rr['m_pi_key'];
 						// $lastid = '12322';
 						if ($insertfrom == 'M') {
-
 							$connec->query("update m_pi set insertfrommobile = 'Y' where m_pi_key = '" . $lastid . "'");
 						} else if ($insertfrom == 'W') {
 							$connec->query("update m_pi set insertfromweb = 'Y' where m_pi_key = '" . $lastid . "'");
-
-
 						}
-
-
 					}
 
 					$no = 0;
 					$items = array();
-					$hasil = get_data_cat_get($ss, $pc, $org_key, $kode_toko);
+					$hasil = get_data_cat_get_cyber($base_url, $pc, $rack, $org_key, $kode_toko, "Category");
 					$total = 0;
 
 					$j_hasil = json_decode($hasil, true);
@@ -3107,264 +2519,6 @@ if ($_GET['modul'] == 'inventory') {
 			echo $json_string;
 
 		}
-	} else if ($_GET['act'] == 'release') {
-
-		$no = 0;
-		$items = array();
-		$pi_key = $_POST['m_pi'];
-		// $pi_key = 'AFE7B608A79C409E806CEFC27794B309';
-		$sql = "select * from m_pi where m_pi_key ='" . $pi_key . "'";
-		$result = $connec->query($sql);
-		foreach ($result as $row) {
-
-			$a = $row['ad_client_id'];
-			$b = $row['ad_org_id'];
-			$c = $row['insertdate'];
-			$d = $row['insertby'];
-			$e = $row['m_locator_id'];
-			$f = $row['inventorytype'];
-			$ff = $row['name'];
-			$g = $row['description'];
-			$h = $row['movementdate'];
-			$i = $row['approvedby'];
-			$j = $row['status'];
-			$k = $row['rack_name'];
-			$l = $row['postby'];
-			$m = $row['postdate'];
-			$n = $row['isactived'];
-
-			$stats = push_to_server($pi_key, $a, $b, $c, $d, $e, $f, $ff, $g, $h, $i, $j, $k, $l, $m, $n);
-
-			$jsons = json_decode($stats, true);
-
-
-			// var_dump($jsons);
-
-			if ($jsons['result'] == '1') {
-
-				$connec->query("update m_pi set status = '3' where m_pi_key ='" . $pi_key . "'");
-
-
-				$sql_line = "select m_piline.*, pos_mproduct.name from m_piline left join pos_mproduct on m_piline.sku = pos_mproduct.sku where m_piline.m_pi_key ='" . $pi_key . "' and m_piline.issync =0";
-
-
-
-
-				foreach ($connec->query($sql_line) as $rline) {
-					$items[] = array(
-						'm_piline_key' => $rline['m_piline_key'],
-						'm_pi_key' => $rline['m_pi_key'],
-						'ad_client_id' => $rline['ad_client_id'],
-						'ad_org_id' => $rline['ad_org_id'],
-						'isactived' => $rline['isactived'],
-						'insertdate' => $rline['insertdate'],
-						'insertby' => $rline['insertby'],
-						'postby' => $rline['postby'],
-						'postdate' => $rline['postdate'],
-						'm_storage_id' => $rline['m_storage_id'],
-						'm_product_id' => $rline['m_product_id'],
-						'sku' => $rline['sku'],
-						'name' => $rline['name'],
-						'qtyerp' => $rline['qtyerp'],
-						'qtycount' => $rline['qtycount'],
-						'issync' => $rline['issync'],
-						'status' => $rline['status'],
-						'verifiedcount' => $rline['verifiedcount'],
-						'qtysales' => $rline['qtysales'],
-						'price' => $rline['price'],
-						'qtysalesout' => $rline['qtysalesout']
-					);
-
-				}
-				$items_json = json_encode($items);
-				$hasil = push_to_server_line_all($items_json);
-
-				$j_hasil = json_decode($hasil, true);
-
-
-				// var_dump($hasil);
-
-				// die();
-
-
-
-				foreach ($j_hasil as $r) {
-					$statement1 = $connec->query("update m_piline set issync = '" . $r['status'] . "' where m_piline_key = '" . $r['m_piline_key'] . "' 
-									and m_pi_key ='" . $r['m_pi_key'] . "'");
-					if ($statement1) {
-
-						$connec->query("update pos_mproduct set isactived = 1 where sku = '" . $r['sku'] . "'");
-						$no = $no + 1;
-
-					} else {
-						// $json = array('result'=>'0');	
-
-					}
-
-				}
-
-
-
-			}
-
-			$json = array('result' => '1', 'msg' => 'Berhasil mengirim ' . $no . ' data');
-			$json_string = json_encode($json);
-			echo $json_string;
-
-		}
-
-
-
-
-
-	} else if ($_GET['act'] == 'releasegantung') {
-		$no = 0;
-		$pi_key = $_POST['m_pi'];
-
-
-
-		$sql_line = "select m_piline.*, pos_mproduct.name from m_piline left join pos_mproduct on m_piline.sku = pos_mproduct.sku where m_piline.m_pi_key ='" . $pi_key . "' and m_piline.issync =0";
-
-
-		foreach ($connec->query($sql_line) as $rline) {
-
-			// var_dump($rline['m_piline_key']);
-			$stats1 = push_to_server_line(
-				$rline['m_piline_key'],
-				$rline['m_pi_key'],
-				$rline['ad_client_id'],
-				$rline['ad_org_id'],
-				$rline['isactived'],
-				$rline['insertdate'],
-				$rline['insertby'],
-				$rline['postby'],
-				$rline['postdate'],
-				$rline['m_storage_id'],
-				$rline['m_product_id'],
-				$rline['sku'],
-				$rline['name'],
-				$rline['qtyerp'],
-				$rline['qtycount'],
-				$rline['issync'],
-				$rline['status'],
-				$rline['verifiedcount'],
-				$rline['qtysales'],
-				$rline['price'],
-				$rline['qtysalesout']
-
-			);
-			// var_dump($stats1);
-			$jsons1 = json_decode($stats1, true);
-			if ($jsons1['result'] == '1') {
-				$statement1 = $connec->query("update m_piline set issync = '1' where sku = '" . $jsons1['sku'] . "' and m_pi_key ='" . $pi_key . "'");
-				if ($statement1) {
-
-					$connec->query("update pos_mproduct set isactived = 1 where sku = '" . $jsons1['sku'] . "'");
-
-
-
-					$no = $no + 1;
-					$json = array('result' => '1', 'msg' => 'Berhasil mengirim ' . $no . ' data');
-				} else {
-					$json = array('result' => '0');
-
-				}
-			}
-		}
-
-
-
-
-
-		$json_string = json_encode($json);
-		echo $json_string;
-
-
-
-
-
-
-
-	} else if ($_GET['act'] == 'sync_inv') {
-
-		// $json_url = "https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=sync_inv&org_id=".$org_key;
-		$jsons = get_data_gudang($ad_morg_key);
-		// $jsons = file_get_contents($json_url);
-
-
-
-		$arr = json_decode($jsons, true);
-		$jum = count($arr);
-		$s = array();
-		if ($jum > 0) {
-			$truncate = $connec->query("TRUNCATE TABLE inv_mproduct");
-			if ($truncate) {
-
-
-				// echo $jum;
-				$no = 0;
-
-				foreach ($arr as $item) { //foreach element in $arr
-					$aoi = $item['ad_org_id']; //etc
-					$mpi = $item['m_product_id']; //etc
-					$mpci = $item['m_product_category_id']; //etc
-					$sku = $item['sku']; //etc
-					$n = str_replace("'", "", $item['name']); //etc
-					$rn = $item['rack_name']; //etc
-					// print_r($aoi);
-
-					// $ss = "insert into inv_mproduct (insertdate, isactived, insertby, postby, postdate, ad_mclientkey, ad_morg_key, m_product_id, m_product_category_id, sku, name, rack_name) 
-					// VALUES ('".date('Y-m-d H:i:s')."','1', 'SYSTEM', 'SYSTEM', '".date('Y-m-d H:i:s')."','D089DFFA729F4A22816BD8838AB0813C', '".$aoi."', '".$mpi."', '".$mpci."','".$sku."', '".$n."', '".$rn."')";
-					// print_r($ss);
-					// $statement1 = $connec->query("insert into inv_mproduct (insertdate, insertby, postby, postdate, ad_mclient_key, ad_morg_key, m_product_id, m_product_category_id, sku, name, rack_name) 
-					// VALUES ('".date('Y-m-d H:i:s')."','SYSTEM', 'SYSTEM', '".date('Y-m-d H:i:s')."','D089DFFA729F4A22816BD8838AB0813C', '".$aoi."', '".$mpi."', '".$mpci."','".$sku."', '".$n."', '".$rn."')");
-
-
-					$s[] = "('" . date('Y-m-d H:i:s') . "','SYSTEM', 'SYSTEM', '" . date('Y-m-d H:i:s') . "','D089DFFA729F4A22816BD8838AB0813C', '" . $aoi . "', '" . $mpi . "', '" . $mpci . "','" . $sku . "', '" . $n . "', '" . $rn . "')";
-
-
-
-				}
-
-				$jum_s = count($s);
-
-				if ($jum_s > 0) {
-					$values = implode(", ", $s);
-					$qqq = "insert into inv_mproduct (insertdate, insertby, postby, postdate, ad_mclient_key, ad_morg_key, m_product_id, m_product_category_id, sku, name, rack_name) 
-						VALUES " . $values . ";";
-					$suc = $connec->query($qqq);
-
-
-					if ($suc) {
-
-						$json = array('result' => '1', 'msg' => 'Berhasil sync');
-						$json_string = json_encode($json);
-
-					} else {
-
-						$json = array('result' => '1', 'msg' => 'Gagal sync, coba lagi nanti', 'query' => $qqq);
-						$json_string = json_encode($json);
-					}
-
-				} else {
-					$json = array('result' => '1', 'msg' => 'Gagal sync, data rack blm ditemukan');
-					$json_string = json_encode($json);
-
-				}
-
-			}
-
-		} else {
-
-			$json = array('result' => '1', 'msg' => 'Gagal sync, data rack blm ditemukan');
-			$json_string = json_encode($json);
-
-		}
-
-
-		echo $json_string;
-
-
 	} else if ($_GET['act'] == 'sync_promo') {
 
 		$sqll = "select ad_morg_key from ad_morg where postby = 'SYSTEM'";
@@ -3885,10 +3039,13 @@ VALUES('" . $item['ad_client_id'] . "', '" . $item['ad_org_id'] . "', '1', '" . 
 				$mpk = $j_hasil['m_pi_key'];
 				$status = $j_hasil['status'];
 
-				if ($status == '3') {
+				if ($status == '2') {
 
-					$update = $connec->query("update m_pi set status = '4' where m_pi_key = '" . $mpk . "'");
+					$update = $connec->query("update m_pi set status = '2' where m_pi_key = '" . $mpk . "'");
 					if ($update) {
+
+						$connec->query("update m_piline set issync = '0' where m_pi_key = '" . $mpk . "'");
+
 						$no = $no + 1;
 
 					}
@@ -3901,14 +3058,6 @@ VALUES('" . $item['ad_client_id'] . "', '" . $item['ad_org_id'] . "', '1', '" . 
 
 					$json = array('result' => '1', 'msg' => 'Berhasil sync ' . $no . ' header');
 				}
-
-				// echo $mpk
-
-				// if($update){
-				// $json = array('result'=>'1', 'msg'=>'Berhasil');
-
-				// }
-
 			}
 
 		} else {
@@ -4418,211 +3567,6 @@ locator_name) VALUES (
 		echo $json_string;
 		// echo $sql;
 
-	} else if ($_GET['act'] == 'sync_pos') {
-
-
-		// $sku = "8151000000129";
-
-		$sqll = "select ad_morg_key from ad_morg where postby = 'SYSTEM'";
-		$results = $connec->query($sqll);
-		foreach ($results as $r) {
-			$org_keys = $r["ad_morg_key"];
-		}
-
-		$hasil = get_data_stock_all($org_keys);
-		$j_hasil = json_decode($hasil, true);
-
-		// $jum = count($hasil);
-
-		// if($jum > 0){
-		$no = 0;
-		foreach ($j_hasil as $r) {
-
-
-			$stock_sales = 0;
-			$haha = 0;
-			$ceksales = $connec->query("select sku, sum(qty) as jj from pos_dsalesline where sku = '" . $r['sku'] . "' and date(insertdate) = date(now()) group by sku");
-			foreach ($ceksales as $rs) {
-
-				$stock_sales = $rs['jj'];
-			}
-
-			$cekitems = $connec->query("select count(sku) as jum, stockqty from pos_mproduct where sku = '" . $r['sku'] . "' group by sku, stockqty");
-			foreach ($cekitems as $ra) {
-
-				$haha = $ra['jum'];
-			}
-
-			$totqty = $r['stockqty'] - $stock_sales;
-			// $totqty = $r['stockqty'];
-
-			if ($haha > 0) {
-
-
-
-				$upcount = $connec->query("update pos_mproduct set sku = '" . $r['sku'] . "', stockqty='" . $totqty . "', name = '" . substr($r['namaitem'], 0, 49) . "', price = '" . $r['price'] . "' where m_product_id='" . $r['m_product_id'] . "'");
-
-
-
-			} else {
-				$sql = "insert into pos_mproduct (
-ad_mclient_key,
-ad_morg_key,
-isactived,
-insertdate,
-insertby,
-postby,
-postdate,
-m_product_id,
-m_product_category_id,
-c_uom_id,
-sku,
-name,
-price,
-stockqty,
-m_locator_id,
-locator_name) VALUES (
-				'" . $r['ad_client_id'] . "',
-				'" . $r['ad_mor_key'] . "',
-				'" . $r['isactive'] . "',
-				'" . $r['insertdate'] . "',
-				'" . $r['insertby'] . "',
-				'" . $r['postby'] . "',
-				'" . $r['postdate'] . "',
-				'" . $r['m_product_id'] . "',
-				'" . $r['m_product_category_id'] . "',
-				'" . $r['c_uom_id'] . "',
-				'" . $r['sku'] . "',
-				'" . substr($r['namaitem'], 0, 49) . "',
-				'" . $r['price'] . "',
-				'" . $r['stockqty'] . "',
-				'" . $r['m_locator_id'] . "',
-				'" . $r['locator_name'] . "'
-)";
-				$upcount = $connec->query($sql);
-
-				// echo $sql;
-
-			}
-
-
-
-
-
-
-
-			if ($upcount) {
-				$no = $no + 1;
-
-			}
-
-
-
-		}
-
-		$data = array("result" => 1, "msg" => "Berhasil sync " . $no . " data");
-
-		$json_string = json_encode($data);
-		echo $json_string;
-		// echo $sql;
-
-	} else if ($_GET['act'] == 'sync_pos_awal') {
-
-
-		// $sku = "8151000000129";
-
-		$sqll = "select ad_morg_key from ad_morg where postby = 'SYSTEM'";
-		$results = $connec->query($sqll);
-		foreach ($results as $r) {
-			$org_keys = $r["ad_morg_key"];
-		}
-
-		$hasil = get_data_stock_all($org_keys);
-		$j_hasil = json_decode($hasil, true);
-
-		// $jum = count($hasil);
-
-		// if($jum > 0){
-		$no = 0;
-		$s = array();
-		foreach ($j_hasil as $r) {
-
-
-			$stock_sales = 0;
-			$haha = 0;
-			$ceksales = $connec->query("select sku, sum(qty) as jj from pos_dsalesline where sku = '" . $r['sku'] . "' and date(insertdate) = date(now()) group by sku");
-			foreach ($ceksales as $rs) {
-
-				$stock_sales = $rs['jj'];
-			}
-
-
-			$totqty = $r['stockqty'] - $stock_sales;
-
-			$s[] = "(
-				'" . $r['ad_client_id'] . "',
-				'" . $r['ad_mor_key'] . "',
-				'" . $r['isactive'] . "',
-				'" . $r['insertdate'] . "',
-				'" . $r['insertby'] . "',
-				'" . $r['postby'] . "',
-				'" . $r['postdate'] . "',
-				'" . $r['m_product_id'] . "',
-				'" . $r['m_product_category_id'] . "',
-				'" . $r['c_uom_id'] . "',
-				'" . $r['sku'] . "',
-				'" . $r['barcode'] . "',
-				'" . substr($r['namaitem'], 0, 49) . "',
-				'" . $r['price'] . "',
-				'" . $totqty . "',
-				'" . $r['m_locator_id'] . "',
-				'" . $r['locator_name'] . "')";
-
-		}
-
-		$jum_arr = count($s);
-
-		if ($jum_arr > 0) {
-
-			// $connec->query("truncate table pos_mproduct");
-
-			$values = implode(", ", $s);
-
-			$insert = "insert into pos_mproduct (
-			ad_mclient_key,
-			ad_morg_key,
-			isactived,
-			insertdate,
-			insertby,
-			postby,
-			postdate,
-			m_product_id,
-			m_product_category_id,
-			c_uom_id,
-			sku,
-			barcode,
-			name,
-			price,
-			stockqty,
-			m_locator_id,
-			locator_name) VALUES " . $values . "";
-
-			$insert_bulk = $connec->query($insert);
-			if ($insert_bulk) {
-
-				$data = array("result" => 1, "msg" => "Berhasil sync data");
-			} else {
-
-				$data = array("result" => 0, "msg" => "Gagal sync data");
-
-			}
-
-		}
-
-		$json_string = json_encode($data);
-		echo $json_string;
-		// echo $sql;
-
 	} else if ($_GET['act'] == 'input_shortcut') {
 		$sku = $_POST['sku'];
 		$shortcut = $_POST['shortcut'];
@@ -4850,48 +3794,6 @@ locator_name) VALUES (
 		$json_string = json_encode($json);
 		echo $json_string;
 
-	} else if ($_GET['act'] == 'sync_sku') {
-
-		$hasil = get_data_sku();
-		$j_hasil = json_decode($hasil, true);
-
-		$no = 0;
-		foreach ($j_hasil as $r) {
-
-			$upcount = $connec->query("update pos_mproduct set sku='" . $r['sku'] . "' where m_product_id='" . $r['m_product_id'] . "'");
-
-			if ($upcount) {
-				$no = $no + 1;
-
-			}
-		}
-
-		$data = array("result" => 1, "msg" => "Berhasil sync " . $no . " data");
-
-		$json_string = json_encode($data);
-		echo $json_string;
-
-	} else if ($_GET['act'] == 'sync_items_nonaktif') {
-
-		$hasil = get_data_sku_nonaktif();
-		$j_hasil = json_decode($hasil, true);
-
-		$no = 0;
-		foreach ($j_hasil as $r) {
-
-			$upcount = $connec->query("delete from pos_mproduct where sku='" . $r['sku'] . "' ");
-
-			if ($upcount) {
-				$no = $no + 1;
-
-			}
-		}
-
-		$data = array("result" => 1, "msg" => "Berhasil sync data");
-
-		$json_string = json_encode($data);
-		echo $json_string;
-
 	} else if ($_GET['act'] == 'load_product') {
 		$sku = $_POST['sku'];
 		$list_line = "select sku, name, coalesce(stockqty,0) as stock from pos_mproduct where sku = '" . $sku . "' order by name asc";
@@ -4992,28 +3894,6 @@ locator_name) VALUES (
 		}
 
 
-	} else if ($_GET['act'] == 'load_product_nonaktif') {
-
-		$hasil = get_data_sku_nonaktif();
-		$j_hasil = json_decode($hasil, true);
-
-		$no = 1;
-		foreach ($j_hasil as $r) {
-
-			$count = $connec->query("select name, barcode from pos_mproduct where sku = '" . $r['sku'] . "'");
-			foreach ($count as $rr) {
-
-
-				echo "<tr>
-				<td>" . $no . "</td>
-				<td>" . $r['sku'] . "</td>
-				<td>" . $rr['name'] . "</td>
-				<td>" . $r['updated'] . "</td>
-
-				</tr>";
-				$no++;
-			}
-		}
 	} else if ($_GET['act'] == 'cetak_generic') {
 		$mpi = $_POST['mpi'];
 		$sort = $_POST['sort'];
@@ -5212,173 +4092,6 @@ locator_name) VALUES (
 
 
 		$json_string = json_encode($haha);
-		echo $json_string;
-	} else if ($_GET['act'] == 'send_newpos') {
-		$userid = $_GET['userid'];
-		$tanggal = $_GET['tanggal'];
-		$jj = array();
-		$list_line = "select * from cash_in where status = '1' and date(insertdate) = '" . $tanggal . "'";
-		$no = 1;
-		foreach ($connec->query($list_line) as $row1) {
-			$jj[] = array(
-				"cashinid" => $row1['cashinid'],
-				"org_key" => $row1['org_key'],
-				"userid" => $row1['userid'],
-				"nama_insert" => $row1['nama_insert'],
-				"cash" => $row1['cash'],
-				"insertdate" => $row1['insertdate'],
-				"status" => $row1['status'],
-				"approvedby" => $row1['approvedby'],
-				"syncnewpos" => $row1['syncnewpos']
-			);
-		}
-
-		if (!$jj) {
-			$data = array("result" => 0, "msg" => "Belum ada cash in yg di approved");
-
-		} else {
-			$allarray = array("cashin" => $jj);
-			$items_json = json_encode($allarray);
-			$hasil = push_to_newpos($items_json);
-			// var_dump($hasil);
-			$j_hasil = json_decode($hasil, true);
-
-			if (!empty($j_hasil)) {
-
-				foreach ($j_hasil as $r) {
-					$statement1 = $connec->query("update cash_in set syncnewpos = '" . $r['status'] . "' where cashinid = '" . $r['cashinid'] . "'");
-					if ($statement1) {
-						$no = $no + 1;
-					}
-				}
-
-				$data = array("result" => 1, "msg" => "Berhasil kirim ke newpos");
-
-			} else {
-
-				$data = array("result" => 0, "msg" => "Gagal kirim ke newpos, coba lagi beberapa saat");
-
-			}
-
-
-		}
-
-
-
-		$json_string = json_encode($data);
-		echo $json_string;
-	} else if ($_GET['act'] == 'send_price') {
-		$json_url = "https://pi.idolmartidolaku.com/api/action.php?modul=inventory&act=cek_perubahan_harga";
-		$options = stream_context_create(array(
-			'http' =>
-				array(
-					'timeout' => 10 //10 seconds
-				)
-		));
-		// echo file_get_contents('http://example.com/', false, $options);
-
-
-		$json = file_get_contents($json_url, false, $options);
-
-		$arr = json_decode($json, true);
-		$jum = count($arr);
-
-		// var_dump($json);
-		$jj = array();
-		$s = array();
-		if ($jum > 0) {
-			$no = 1;
-			foreach ($arr as $row1) {
-				// echo $row1['sku'];
-				$sql_list = "select date(now()) as tgl_sekarang, a.sku, a.name ,b.rack_name, a.barcode, a.price, a.tag from pos_mproduct a 
-							left join inv_mproduct b on a.sku = b.sku where a.sku = '" . $row1['sku'] . "' 
-							and a.price != '" . $row1['price'] . "' group by a.sku, a.name, b.rack_name, a.barcode, a.price, a.tag order by a.name";
-
-				foreach ($connec->query($sql_list) as $row) {
-
-
-					$jj[] = array(
-						"sku" => $row['sku'],
-						"name" => $row['name'],
-						"price" => $row['price'],
-						"price_erp" => $row1['price'],
-						"store_name" => $storename,
-					);
-
-					// echo $row['sku'];
-
-
-				}
-			}
-
-		}
-
-		if (!$jj) {
-			$data = array("result" => 0, "msg" => "Gagal kirim ke newpos");
-
-		} else {
-			$allarray = array("cashin" => $jj);
-			$items_json = json_encode($allarray);
-			$hasil = push_to_newpos_price($items_json);
-			$j_hasil = json_decode($hasil, true);
-
-			$data = array("result" => 1, "msg" => "Berhasil kirim ke newpos");
-		}
-
-		$json_string = json_encode($data);
-		echo $json_string;
-		// var_dump($hasil);
-	} else if ($_GET['act'] == 'send_newposall') {
-		$jj = array();
-		$list_line = "select * from cash_in where status = '1' and syncnewpos = '0'";
-		$no = 1;
-		foreach ($connec->query($list_line) as $row1) {
-			$jj[] = array(
-				"cashinid" => $row1['cashinid'],
-				"org_key" => $row1['org_key'],
-				"userid" => $row1['userid'],
-				"nama_insert" => $row1['nama_insert'],
-				"cash" => $row1['cash'],
-				"insertdate" => $row1['insertdate'],
-				"status" => $row1['status'],
-				"approvedby" => $row1['approvedby'],
-				"syncnewpos" => $row1['syncnewpos']
-			);
-		}
-
-		if (!$jj) {
-			$data = array("result" => 0, "msg" => "Belum ada cash in yg di approved");
-
-		} else {
-			$allarray = array("cashin" => $jj);
-			$items_json = json_encode($allarray);
-			$hasil = push_to_newpos($items_json);
-			// var_dump($hasil);
-			$j_hasil = json_decode($hasil, true);
-
-			if (!empty($j_hasil)) {
-
-				foreach ($j_hasil as $r) {
-					$statement1 = $connec->query("update cash_in set syncnewpos = '" . $r['status'] . "' where cashinid = '" . $r['cashinid'] . "'");
-					if ($statement1) {
-						$no = $no + 1;
-					}
-				}
-
-				$data = array("result" => 1, "msg" => "Berhasil kirim ke newpos");
-
-			} else {
-
-				$data = array("result" => 0, "msg" => "Gagal kirim ke newpos, coba lagi beberapa saat");
-
-			}
-
-
-		}
-
-
-
-		$json_string = json_encode($data);
 		echo $json_string;
 	} else if ($_GET['act'] == 'cetak_excel') {
 
@@ -7177,11 +5890,11 @@ ELSE 'Belum Sesuai' END AS status from pos_mproduct a WHERE a.sku ILIKE  '%$sear
 
 
 	} else if ($_GET['act'] == 'input_cashin') {
-		$org_key = $_SESSION['org_key'];
-		$nama_insert = $_SESSION['username'];
-
-
+		$org_key = $_POST['ad_org_id'];
+		$nama_insert = $_POST['userid'];
 		$cash = $_POST['cash'];
+
+
 		$date = date("Y-m-d H:i:s");
 
 		if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
@@ -7202,11 +5915,6 @@ ELSE 'Belum Sesuai' END AS status from pos_mproduct a WHERE a.sku ILIKE  '%$sear
 		} else {
 			$json = array('result' => '3', 'msg' => 'Sesi user telah habis, reload halamannya');
 		}
-
-
-
-		// $sqls = "INSERT INTO cash_in (org_key, userid, nama_insert, cash, insertdate, status)
-		// VALUES('".$org_key."', '".$useridcuy."', '".$nama_insert."', '".$cash."', '".$date."','0')";	
 
 		$json_string = json_encode($json);
 		echo $json_string;
@@ -7320,47 +6028,6 @@ ELSE 'Belum Sesuai' END AS status from pos_mproduct a WHERE a.sku ILIKE  '%$sear
 		$json_string = json_encode($json);
 		echo $json_string;
 		// echo $sql;
-	} else if ($_GET['act'] == 'get_plano') {
-
-		$sqll = "select ad_morg_key from ad_morg where postby = 'SYSTEM'";
-		$results = $connec->query($sqll);
-		foreach ($results as $r) {
-			$org_key = $r["ad_morg_key"];
-		}
-
-
-
-		$jsons = get_data_gudang($org_key);
-
-
-
-
-		$arr = json_decode($jsons, true);
-		$jum = count($arr);
-
-		// var_dump($jsons);
-
-		$s = array();
-		if ($jum > 0) {
-			$no = 1;
-			foreach ($arr as $row1) {
-
-				echo
-					"<tr>
-								<td>" . $no . "</td>
-								<td>" . $row1['sku'] . "</td>
-								<td>" . $row1['name'] . "</td>
-								<td>" . $row1['rack_name'] . "</td>
-								<td>" . $row1['type'] . "</td>
-
-							</tr>";
-
-
-
-				$no++;
-			}
-		}
-
 	} else if ($_GET['act'] == 'get_type') {
 		$sqll = "select ad_morg_key from ad_morg where postby = 'SYSTEM'";
 		$results = $connec->query($sqll);
@@ -7651,16 +6318,5 @@ ELSE 'Belum Sesuai' END AS status from pos_mproduct a WHERE a.sku ILIKE  '%$sear
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 ?>
