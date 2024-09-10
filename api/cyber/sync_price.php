@@ -1,5 +1,5 @@
 <?php include "../../config/koneksi.php";
-
+$connec->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $ll = "select * from ad_morg where isactived = 'Y'";
 $query = $connec->query($ll);
 
@@ -33,28 +33,41 @@ $url = $base_url.'/store/price/get_price.php?idstore='. $idstore;
 
 $hasil = get($url);
 $j_hasil = json_decode($hasil, true);
+
+// print_r($j_hasil);
+
 $items_updated = 0;
 $s = array();
-foreach ($j_hasil as $key => $value) {
 
-    $description = $value['description'];
-    $itemid = $value['itemid'];
-    $unitprice = $value['unitprice'];
 
-    //update pos_mproduct
-    $update = "UPDATE pos_mproduct SET price = '" . $unitprice . "', name = '". $description."', postdate = '" . date('Y-m-d H:i:s') . "' WHERE sku = '" . $itemid . "'";
-    $result = $connec->exec($update);
+try{
+    foreach ($j_hasil as $key => $value) {
 
-    if ($result) {
-        $items_updated++;
+        $description = $value['description'];
+        $itemid = $value['itemid'];
+        $unitprice = $value['unitprice'];
+
+        //update pos_mproduct
+        $update = "UPDATE pos_mproduct SET price = '" . $unitprice . "', name = '" . $description . "', postdate = '" . date('Y-m-d H:i:s') . "' 
+        WHERE sku = '" . $itemid . "'";
+        // echo $update;
+
+        $result = $connec->query($update);
+
+        if ($result) {
+            $items_updated++;
+        }
     }
+    $json = array(
+        "status" => "SUCCESS",
+        "message" => $items_updated . " price updated successfully",
+        "data" => $update
+    );
+
+    echo json_encode($json);
+}catch(PDOException $e){
+    echo $e->getMessage();
 }
 
-$json = array(
-    "status" => "SUCCESS",
-    "message" => $items_updated . " price updated successfully",
-    "data" => $update
-);
 
-echo json_encode($json);
 ?>
