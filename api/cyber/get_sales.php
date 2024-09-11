@@ -71,20 +71,37 @@ foreach ($statement3 as $r) {
 $selisih = $header_amount - $j_hasil['header_amount'];
 $selisih_line = $line_amount - $j_hasil['line_amount'];
 
+$gtk_amount = 0;
+$gtk = $connec->query("select salesamount from pos_dshopsales where date(salesdate) = '" . $tanggal . "' and status_intransit = '1'");
+foreach ($gtk as $r) {
+    $gtk_amount = $r['salesamount'];
+}
+
+$selisih_gtk = $gtk_amount - $j_hasil['line_amount'];
+
+if($selisih_gtk != 0){
+    $msg_gtk = "<font style='color: red; font-weight: bold'> Masih ada selisih : " . rupiah($selisih_gtk) . "</font>";
+}else{
+    $msg_gtk = "<font style='color: green; font-weight: bold'> Tidak ada selisih..</font>";
+}
 
 if ($selisih != 0 || $selisih_line != 0) {
     $msg = "<font style='color: red; font-weight: bold'> Masih ada selisih.. , Header : " . $selisih . ", Line : " . $selisih_line . "</font>";
 } else {
     $msg = "<font style='color: green; font-weight: bold'> Tidak ada selisih..</font>";
 }
+
 echo "<table border='1'>";
 echo "<tr>
-        <th colspan='2'>Status Sales Order</th>
+        <th>Tgl Sales Order</th>
+        <th>Lokal vs ERP</th>
+        <th>Status Tutup Harian</th>
         </tr>";
 echo "<tr style='background: #fff'>";
 echo "
         <td>" . $tanggal . "</td>
         <td>" . $msg . "</td>
+        <td>" . $msg_gtk . "</td>
         
         ";
 echo "</tr>";
