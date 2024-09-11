@@ -41,8 +41,13 @@ $jj_posdshopsales = array();
 
 
 
-$list_posdshopsales = "select * from pos_dshopsales where date(insertdate) = '" . $tanggal . "'
-and status_intransit is null";
+
+
+if ($tanggal != "") {
+    $list_posdshopsales = "select * from pos_dshopsales where date(insertdate) = '" . $tanggal . "' and status_intransit is null";
+} else {
+    $list_posdshopsales = "select * from pos_dshopsales where status_intransit is null";
+}
 
 foreach ($connec->query($list_posdshopsales) as $row5) {
     $jj_posdshopsales[] = array(

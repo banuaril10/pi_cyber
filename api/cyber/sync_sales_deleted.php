@@ -39,8 +39,13 @@ function push_to_deleted($url, $deleted, $idstore)
 
 $jj_deleted = array();
 
-$list_deleted = "select * from pos_dsalesdeleted where date(insertdate) = '" . $tanggal . "'
-and status_intransit is null";
+if ($tanggal != "") {
+    $list_deleted = "select * from pos_dsalesdeleted where date(insertdate) = '" . $tanggal . "' and status_intransit is null";
+} else {
+    $list_deleted = "select * from pos_dsalesdeleted where status_intransit is null";
+}
+
+
 foreach ($connec->query($list_deleted) as $row3) {
     $jj_deleted[] = array(
         "pos_dsalesdeleted_key" => $row3['pos_dsalesdeleted_key'],

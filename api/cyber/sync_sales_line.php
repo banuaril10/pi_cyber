@@ -41,15 +41,43 @@ function push_to_line($url, $line, $idstore)
 
 $jj_line = array();
 
-$list_line = "select * from pos_dsalesline where date(insertdate) = '" . $tanggal . "' and isactived = '1' and status_intransit is null ";
+
+
+if ($tanggal != "") {
+    $list_line = "select * from pos_dsalesline where date(insertdate) = '" . $tanggal . "' and isactived = '1' and status_intransit is null ";
+} else {
+    $list_line = "select * from pos_dsalesline where isactived = '1' and status_intransit is null ";
+}
+
+
+
 foreach ($connec->query($list_line) as $row2) {
 
+    $jenis_promo = "";
 
     $get_jenis = $connec->query("select jenis_promo from pos_mproductdiscount 
     where discountname = '" . $row2['discountname'] . "' and sku = '" . $row2['sku'] . "' and date(now()) between fromdate and todate");
 
     foreach ($get_jenis as $r) {
         $jenis_promo = $r['jenis_promo'];
+    }
+
+    if($jenis_promo == ""){
+        $get_jenis = $connec->query("select jenis_promo from pos_mproductdiscountgrosir_new
+        where discountname = '" . $row2['discountname'] . "' and sku = '" . $row2['sku'] . "' and date(now()) between fromdate and todate");
+
+        foreach ($get_jenis as $r) {
+            $jenis_promo = $r['jenis_promo'];
+        }
+    }
+
+    if($jenis_promo == ""){
+        $get_jenis = $connec->query("select jenis_promo from pos_mproductbuyget
+        where discountname = '" . $row2['discountname'] . "' and skuget = '" . $row2['sku'] . "' and date(now()) between fromdate and todate");
+
+        foreach ($get_jenis as $r) {
+            $jenis_promo = $r['jenis_promo'];
+        }
     }
 
 

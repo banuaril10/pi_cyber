@@ -40,7 +40,15 @@ function push_to_cashierbalance($url, $cashierbalance, $idstore)
 
 $jj_cashierbalance = array();
 
-$list_cashierbalance = "select * from pos_dcashierbalance where date(insertdate) = '" . $tanggal . "'";
+
+
+if ($tanggal != "") {
+    $list_cashierbalance = "select * from pos_dcashierbalance where date(insertdate) = '" . $tanggal . "' and status_intransit is null";
+} else {
+    $list_cashierbalance = "select * from pos_dcashierbalance where status_intransit is null";
+}
+
+
 foreach ($connec->query($list_cashierbalance) as $row4) {
     $jj_cashierbalance[] = array(
         "pos_dcashierbalance_key" => $row4['pos_dcashierbalance_key'],

@@ -37,8 +37,14 @@ function push_to_header($url, $header, $idstore)
 
 $jj_header = array();
 
-$list_header = "select * from pos_dsales where date(insertdate) = '" . $tanggal . "' 
-and isactived = '1' and status_intransit is null";
+if($tanggal != ""){
+    $list_header = "select * from pos_dsales where date(insertdate) = '" . $tanggal . "' 
+    and isactived = '1' and status_intransit is null";
+}else{
+    $list_header = "select * from pos_dsales where isactived = '1' and status_intransit is null";
+}
+
+
 foreach ($connec->query($list_header) as $row1) {
     $jj_header[] = array(
         "pos_dsales_key" => $row1['pos_dsales_key'],
