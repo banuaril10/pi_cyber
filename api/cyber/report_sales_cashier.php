@@ -39,7 +39,7 @@ foreach ($statement as $r) {
     $cash_in_sistem = $net_sales - $sales_non_cash;
     // $cash_in_drawer = $r['balanceamount'];
     $cash_in_drawer = $r['actualamount'];
-    $variant = $r['variantmin'] + $r['variantplus'];
+    $variant = $r['actualamount'] + $r['salescashamount'];
     $infaq = $r['donasiamount'];
     $status = $r['issync'];
 
