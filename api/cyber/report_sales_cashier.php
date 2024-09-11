@@ -35,8 +35,10 @@ foreach ($statement as $r) {
     $refund = $r['refundamount'];
     $net_sales = $sales - $discount - $refund;
     $sales_non_cash = $r['salesdebitamount'] + $r['salescreditamount'];
-    $cash_in_sistem = $r['actualamount'];
-    $cash_in_drawer = $r['balanceamount'];
+    // $cash_in_sistem = $r['actualamount'];
+    $cash_in_sistem = $net_sales - $sales_non_cash;
+    // $cash_in_drawer = $r['balanceamount'];
+    $cash_in_drawer = $r['actualamount'];
     $variant = $r['variantmin'] + $r['variantplus'];
     $infaq = $r['donasiamount'];
     $status = $r['issync'];
