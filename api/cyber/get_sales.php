@@ -94,7 +94,7 @@ if ($selisih != 0 || $selisih_line != 0) {
 echo "<table border='1'>";
 echo "<tr>
         <th>Tgl Sales Order</th>
-        <th>Lokal vs ERP</th>
+        <th>Lokal vs InTransit</th>
         <th>Status Tutup Harian</th>
         </tr>";
 echo "<tr style='background: #fff'>";
