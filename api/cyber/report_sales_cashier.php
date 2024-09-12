@@ -33,7 +33,7 @@ foreach ($statement as $r) {
     $cash_in_sistem = $net_sales - $sales_non_cash;
     // $cash_in_drawer = $r['balanceamount'];
     $cash_in_drawer = $r['actualamount'];
-    $variant = ($r['salesamount'] - $r['salesdebitamount'] - $r['salescreditamount']) - $r['actualamount'];
+    $variant = $r['actualamount'] - ($r['salesamount'] - $r['salesdebitamount'] - $r['salescreditamount']);
     $infaq = $r['donasiamount'];
     $status = $r['status'];
 
