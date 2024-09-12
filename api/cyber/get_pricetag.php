@@ -28,7 +28,7 @@ $date_now = date('d/m/Y');
 
 $products = array();
 foreach ($statement as $r) {
-    $products[] = $r['sku']."|".$r['name']."|".$r['price']."|".$date_now."|".$r['rack_name']."|".$r['shortcut']."|".$r['harga_last']."|".$r['tag']."|".$storecode."/".date('dmy')."|".$r['barcode'];
+    $products[] = $r['sku']."|".$r['name']."|".$r['price']."|".$date_now."|".$r['rack']."|".$r['shortcut']."|".$r['harga_last']."|".$r['tag']."|".$storecode."/".date('dmy')."|".$r['barcode'];
 }
 
 $json = array(

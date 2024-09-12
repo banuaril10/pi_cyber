@@ -13,10 +13,18 @@ $statement = $connec->query($query);
 foreach ($statement as $r) {
     $sales_date = $r['salesdate'];
     $close_date = $r['closedate'];
-    $sales = $r['salesamount'];
+
+    
+    // $sales = $r['salesamount'];
+    
+
     $discount = $r['discountamount'];
     $refund = $r['refundamount'];
-    $net_sales = $sales - $discount - $refund;
+
+    $net_sales = $r['salesamount'];
+    $sales = $r['salesamount'] + $discount + $refund;
+
+
     $sales_non_cash = $r['salesdebitamount'] + $r['salescreditamount'];
     // $cash_in_sistem = $r['actualamount'];
     $cash_in_sistem = $net_sales - $sales_non_cash;
