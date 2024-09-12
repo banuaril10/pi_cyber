@@ -1,14 +1,6 @@
 <?php include "../../config/koneksi.php";
 //get
-
-//INSERT INTO public.pos_dcashierbalance
-// // (pos_dcashierbalance_key, ad_mclient_key, ad_morg_key, isactived, insertdate, insertby, postby, postdate, pos_mcashier_key, ad_muser_key, pos_mshift_key, 
-// startdate, enddate, balanceamount, salesamount, status, salescashamount, salesdebitamount, salescreditamount, actualamount, issync, 
-// refundamount, discountamount, cancelcount, cancelamount, donasiamount, pointamount, pointdebitamout, pointcreditamount, status_intransit)
-// // VALUES(get_uuid(), '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, '', 0, 0, 0, 0, false, 0, 0, 0, 0, 0, 0, 0, 0, '');
-
-
-$query = "SELECT * FROM pos_dcashierbalance WHERE isactived = '1' order by date(insertdate) desc";
+$query = "SELECT * FROM pos_dcashierbalance WHERE isactived = '1' and status = 'DONE' order by date(insertdate) desc";
 
 $json = array();
 $no = 1;
@@ -41,7 +33,7 @@ foreach ($statement as $r) {
     $cash_in_drawer = $r['actualamount'];
     $variant = $r['salescashamount'] - $r['actualamount'];
     $infaq = $r['donasiamount'];
-    $status = $r['issync'];
+    $status = $r['status'];
 
 
 
