@@ -22,16 +22,18 @@ foreach ($statement as $r) {
     $start_date = $r['startdate'];
     $close_date = $r['enddate'];
     $balance = $r['balanceamount'];
-    $sales = $r['salesamount'];
+    // $sales = $r['salesamount'];
     $discount = $r['discountamount'];
     $refund = $r['refundamount'];
-    $net_sales = $sales - $discount - $refund;
+    $net_sales = $r['salesamount'];
+    $sales = $r['salesamount'] + $discount + $refund;
+    // $net_sales = $sales - $discount - $refund;
     $sales_non_cash = $r['salesdebitamount'] + $r['salescreditamount'];
     // $cash_in_sistem = $r['actualamount'];
     $cash_in_sistem = $net_sales - $sales_non_cash;
     // $cash_in_drawer = $r['balanceamount'];
     $cash_in_drawer = $r['actualamount'];
-    $variant = $r['salescashamount'] - $r['actualamount'];
+    $variant = ($r['salesamount'] - $r['salesdebitamount'] - $r['salescreditamount']) - $r['actualamount'];
     $infaq = $r['donasiamount'];
     $status = $r['status'];
 
