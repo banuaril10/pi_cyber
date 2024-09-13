@@ -676,7 +676,7 @@ BEGIN
     RETURN OLD; 
 END;
 $function$
-;'];
+;','create trigger trigger_send_to_pos_dsales after delete on public.pos_dsales for each row execute PROCEDURE send_to_pos_dsales()'];
 
 foreach ($send_to_pos_dsales as $r) {
 	$connec->exec($r);
@@ -699,7 +699,7 @@ BEGIN
     RETURN OLD; 
 END;
 $function$
-;'
+;','create trigger trigger_send_to_pos_dsalesline after delete on public.pos_dsalesline for each row execute PROCEDURE send_to_pos_dsalesline()'
 ];
 
 foreach ($send_to_pos_dsalesline as $r) {
