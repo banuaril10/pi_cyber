@@ -89,6 +89,8 @@ function get_data_cat_get_cyber($base_url, $pc, $rack, $org_key, $kode_toko, $ty
 		$url = $base_url . '/netsuite/inventory/get_stock.php';
 	} else if ($type == 'Category') {
 		$url = $base_url . '/netsuite/inventory/get_stock.php';
+	} else if ($type == 'Items') {
+		$url = $base_url . '/netsuite/inventory/get_stock.php';
 	}
 
 	// return $url;
@@ -96,7 +98,8 @@ function get_data_cat_get_cyber($base_url, $pc, $rack, $org_key, $kode_toko, $ty
 		'org_key' => $org_key,
 		'pc' => $pc,
 		'rack' => $rack,
-		'kode_toko' => $kode_toko
+		'kode_toko' => $kode_toko,
+		'type' => $type
 	);
 
 	curl_setopt_array($curl, array(
@@ -552,9 +555,8 @@ function get_data_erp($a, $b, $c, $d)
 
 	curl_close($curl);
 	return $response;
-
-
 }
+
 
 
 function sync_approval($m_pi)
@@ -1173,52 +1175,6 @@ if ($_GET['modul'] == 'inventory') {
 		$json_string = json_encode($json);
 		echo $json_string;
 
-	} else if ($_GET['act'] == 'sync_erp') {
-
-
-		$mpi = $_GET['m_pi'];
-		// $mpi = 'BE7DA436E891492EB27235BF5DAC588C';
-
-		$sql1 = "select m_piline_key, m_pi_key, m_storage_id, m_product_id from m_piline where m_pi_key ='" . $mpi . "' and status = 0";
-		$result = $connec->query($sql1);
-		$count = $result->rowCount();
-
-
-
-
-		$no = 0;
-		foreach ($connec->query($sql1) as $row) {
-
-
-
-
-			$hasil = get_data_erp($row['m_storage_id'], $row['m_product_id'], $org_key, $ss); //php curl
-
-
-			$j_hasil = json_decode($hasil, true);
-
-
-			$qtyon = $j_hasil['qtyon'];
-			$price = $j_hasil['price'];
-			$statuss = $j_hasil['statuss'];
-			$qtyout = $j_hasil['qtyout'];
-			$statusss = $j_hasil['statusss'];
-
-
-
-			$connec->query("update m_piline set qtysalesout = '" . $qtyout . "', qtyerp = '" . $qtyon . "', price = '" . $price . "', status = '" . $statuss . "', status1 = '" . $statusss . "' where m_piline_key ='" . $row['m_piline_key'] . "'");
-
-
-
-
-
-			$json = array('result' => '1', 'msg' => 'Telah sync ' . $no . ' dari ' . $count . ' items');
-
-		}
-
-
-		$json_string = json_encode($json);
-		echo $json_string;
 	} else if ($_GET['act'] == 'counter') {
 
 		$sku = $_POST['sku'];
@@ -1381,16 +1337,12 @@ if ($_GET['modul'] == 'inventory') {
 					$name = $mpii['name'];
 					$sku = $mpii['sku'];
 					// $price = $mpii['price'];
-
 				}
 
 				if ($insertfrom == 'M') {
-
 					$connec->query("update m_pi set insertfrommobile = 'Y' where m_pi_key = '" . $mpi . "'");
 				} else if ($insertfrom == 'W') {
 					$connec->query("update m_pi set insertfromweb = 'Y' where m_pi_key = '" . $mpi . "'");
-
-
 				}
 
 				//cek di maaster product
@@ -1408,48 +1360,53 @@ if ($_GET['modul'] == 'inventory') {
 				}
 				foreach ($gm as $rr) {
 
-					$hasil = get_data_erp($rr['m_locator_id'], $m_pro_id, $org_key, $ss); //php curl
+					$hasil = get_data_cat_get_cyber($base_url, $pc, $sku, $org_key, $kode_toko, "Items");
+					// print_r($hasil);
 
-
+					// $hasil = get_data_erp($rr['m_locator_id'], $m_pro_id, $org_key, $ss); //php curl
 					$j_hasil = json_decode($hasil, true);
 
+					foreach ($j_hasil as $r_hasil) {
+						$qtyon = $r_hasil['qtyon'];
+						$price = $r_hasil['price'];
+						$pricebuy = $r_hasil['pricebuy'];
+						$statuss = $r_hasil['statuss'];
+						$qtyout = $r_hasil['qtyout'];
+						$statusss = $r_hasil['statusss'];
+						$barcode = $r_hasil['barcode'];
 
-					$qtyon = $j_hasil['qtyon'];
-					$price = $j_hasil['price'];
-					$pricebuy = $j_hasil['pricebuy'];
-					$statuss = $j_hasil['statuss'];
-					$qtyout = $j_hasil['qtyout'];
-					$statusss = $j_hasil['statusss'];
-					$barcode = $j_hasil['barcode'];
+						$cek_count = "select qtycount from m_piline where sku = '" . $sku . "' and date(insertdate) = '" . date('Y-m-d') . "'";
+						$rsac = $connec->query($cek_count);
+						$ccc = $rsac->rowCount();
 
+						if ($ccc > 0) {
+							foreach ($rsac as $rrr) {
 
+								$qtycount = $rrr['qtycount'] + 1;
+							}
 
+						} else {
+							$qtycount = 1;
 
-					$cek_count = "select qtycount from m_piline where sku = '" . $sku . "' and date(insertdate) = '" . date('Y-m-d') . "'";
-					$rsac = $connec->query($cek_count);
-					$ccc = $rsac->rowCount();
-
-					if ($ccc > 0) {
-						foreach ($rsac as $rrr) {
-
-							$qtycount = $rrr['qtycount'] + 1;
 						}
 
-					} else {
-						$qtycount = 1;
+						$quer = "insert into m_piline (m_pi_key, ad_org_id, isactived, insertdate, insertby, postdate,m_storage_id, m_product_id, 
+						sku, qtyerp, qtycount, qtysales, price, status, qtysalesout, status1, barcode, hargabeli) 
+						VALUES ('" . $rr['m_pi_key'] . "','" . $org_key . "','1','" . date('Y-m-d H:i:s') . "','" . $username . "', '" .
+							date('Y-m-d H:i:s') . "','" . $rr['m_locator_id'] . "','" . $m_pro_id . "', '" . $sku . "', '" . $qtyon . "', '" . $qtycount . "', 
+						'" . $qtysales . "', '" . $price . "', '1', '" . $qtyout . "', '1', '" . $barcode . "','" . $pricebuy . "')";
+						// echo $quer;
 
+						$statement1 = $connec->query($quer);
+
+
+						if ($statement1) {
+							$connec->query("update pos_mproduct set isactived = 0 where sku = '" . $sku . "'");
+							$json = array('result' => '1', 'msg' => $sku . ' (' . $name . '), QUANTITY = <font style="color: red">' . $qtycount . '</font>');
+						}
 					}
+					
 
-
-
-					$statement1 = $connec->query("insert into m_piline (m_pi_key, ad_org_id, isactived, insertdate, insertby, postdate,m_storage_id, m_product_id, sku, qtyerp, qtycount, qtysales, price, status, qtysalesout, status1, barcode, hargabeli) 
-				VALUES ('" . $rr['m_pi_key'] . "','" . $org_key . "','1','" . date('Y-m-d H:i:s') . "','" . $username . "', '" . date('Y-m-d H:i:s') . "','" . $rr['m_locator_id'] . "','" . $m_pro_id . "', '" . $sku . "', '" . $qtyon . "', '" . $qtycount . "', '" . $qtysales . "', '" . $price . "', '" . $statuss . "', '" . $qtyout . "', '" . $statusss . "', '" . $barcode . "','" . $pricebuy . "')");
-
-
-					if ($statement1) {
-						$connec->query("update pos_mproduct set isactived = 0 where sku = '" . $sku . "'");
-						$json = array('result' => '1', 'msg' => $sku . ' (' . $name . '), QUANTITY = <font style="color: red">' . $qtycount . '</font>');
-					}
 
 				}
 

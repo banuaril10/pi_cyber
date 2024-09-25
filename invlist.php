@@ -55,7 +55,6 @@
 							<tr>
 								<th>No</th>
 								<th>SKU (Barcode Int.)</th>
-							
 								<th>Counter</th>
 
 							</tr>
@@ -321,8 +320,9 @@ input.addEventListener("keypress", function(event) {
 			$('#notif').html("Proses mencari items..");
 		},
 		success: function(dataResult){
-			var dataResult = JSON.parse(dataResult);
 			console.log(dataResult);
+			var dataResult = JSON.parse(dataResult);
+			
 			if(dataResult.result=='2'){
 				input.value = '';
 				$('#notif').html(dataResult.msg+' <button onclick="lanjutInput('+sku+', \''+ m_pi_key + '\', '+kategori+');">Yes</button>');
@@ -361,10 +361,6 @@ input.addEventListener("keypress", function(event) {
 		$('#notif').html("tidak boleh kosong!");
 		
 	}
-	
-	
-	
-	
   }
 });
 

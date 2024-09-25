@@ -554,6 +554,7 @@ $cmd_alter_sync_transit = [
 	'ALTER TABLE pos_mproductdiscount ADD COLUMN IF NOT EXISTS jenis_promo varchar(20);',
 	'ALTER TABLE pos_mproductdiscountgrosir_new ADD COLUMN IF NOT EXISTS jenis_promo varchar(20);',
 	'ALTER TABLE pos_mproductbuyget ADD COLUMN IF NOT EXISTS jenis_promo varchar(20);',
+	'ALTER TABLE pos_medc ADD COLUMN IF NOT EXISTS jenis varchar(20);',
 ];
 
 foreach ($cmd_alter_sync_transit as $r) {
