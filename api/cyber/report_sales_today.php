@@ -13,7 +13,8 @@ while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 
 //group by date(insertdate)
 $json = array();
-$groupdate = "SELECT date(insertdate) as date FROM pos_dsales WHERE isactived = '1' and ad_morg_key = '".$ad_org_id."' group by date(insertdate)";
+$groupdate = "SELECT date(insertdate) as date FROM pos_dsales WHERE isactived = '1' and ad_morg_key = '".$ad_org_id."' group by date(insertdate) order by 
+date(insertdate) desc";
 $statement_groupdate = $connec->query($groupdate);
 foreach ($statement_groupdate as $r_groupdate) {
     $date = $r_groupdate['date'];
